@@ -24,6 +24,7 @@
 #import <objc/message.h>
 #import <objc/runtime.h>
 
+typedef id (*cbl_msgSend)(void*, SEL);
 
 @implementation CBLModel
 
@@ -486,7 +487,8 @@
 + (Class) itemClassForArrayProperty: (NSString*)property {
     SEL sel = NSSelectorFromString([property stringByAppendingString: @"ItemClass"]);
     if ([self respondsToSelector: sel]) {
-        return (Class)objc_msgSend(self, sel);
+        cbl_msgSend func = (cbl_msgSend)objc_msgSend;
+        return (Class)func((__bridge void *)(self), sel);
     }
     return Nil;
 }
@@ -494,7 +496,8 @@
 + (NSString*) inverseRelationForArrayProperty: (NSString*)property {
     SEL sel = NSSelectorFromString([property stringByAppendingString: @"InverseRelation"]);
     if ([self respondsToSelector: sel]) {
-        return (NSString*)objc_msgSend(self, sel);
+        cbl_msgSend func = (cbl_msgSend)objc_msgSend;
+        return (NSString*)func((__bridge void *)(self), sel);
     }
     return nil;
 }
